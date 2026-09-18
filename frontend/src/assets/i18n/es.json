@@ -1,0 +1,92 @@
+{
+  "NAV": { "HOME": "Inicio", "EXPLORE": "Explorar", "RANKINGS": "Ranking", "PROFILE": "Perfil" },
+  "AUTH": {
+    "LOGIN_SUBTITLE": "Descubre cómo realmente se comportan los perfumes.",
+    "REGISTER_SUBTITLE": "Crea tu cuenta para empezar a descubrir.",
+    "NAME": "Nombre",
+    "EMAIL": "Email",
+    "PASSWORD": "Contraseña",
+    "PASSWORD_HINT": "Mínimo 8 caracteres, con mayúscula, minúscula y número.",
+    "LOGIN_CTA": "Iniciar sesión",
+    "REGISTER_CTA": "Crear cuenta",
+    "NO_ACCOUNT": "¿No tienes cuenta?",
+    "HAS_ACCOUNT": "¿Ya tienes cuenta?"
+  },
+  "HOME": {
+    "GREETING": "Hola, {{name}}",
+    "SUBTITLE": "¿Qué quieres descubrir hoy?",
+    "SEARCH_PLACEHOLDER": "Buscar perfume...",
+    "FOR_YOUR_SKIN": "Para tu piel",
+    "TRENDING": "Tendencias",
+    "COMPATIBLE": "compatible",
+    "NO_RECOMMENDATIONS_YET": "Completá tu perfil olfativo y dejá algunas reseñas para ver recomendaciones."
+  },
+  "FRAGRANCE": {
+    "ADD_TO_WISHLIST": "Agregar a wishlist",
+    "DURATION": "duración",
+    "REVIEWS": "reseñas",
+    "PROJECTION": "proyección",
+    "YEAR": "año",
+    "FAMILIES": "Familia",
+    "NOTES": "Notas",
+    "DURATION_DISTRIBUTION": "Duración experimentada",
+    "SKIN_PERFORMANCE": "¿Cómo funciona en diferentes pieles?",
+    "NO_REVIEWS_YET": "Todavía no hay reseñas para este perfume."
+  },
+  "CATALOG": {
+    "SORT": {
+      "RELEVANCE": "Relevancia",
+      "RATING": "Mayor puntuación",
+      "DURATION": "Mayor duración",
+      "MOST_REVIEWED": "Más reseñados",
+      "MOST_RECENT": "Más recientes"
+    },
+    "EMPTY": "No encontramos perfumes con esos filtros."
+  },
+  "COMMON": { "RETRY": "Intentar nuevamente", "LOAD_ERROR": "No pudimos cargar esta información." },
+  "RANKINGS": {
+    "TITLE": "Ranking",
+    "GLOBAL": "Global",
+    "MY_SKIN": "Mi piel",
+    "LONGEVITY": "Duración",
+    "EMPTY": "Todavía no hay suficientes reseñas para armar un ranking.",
+    "NO_SKIN_TYPE": "Completá tu tipo de piel en el perfil para ver este ranking personalizado."
+  },
+  "PROFILE": {
+    "FRAGRANCES": "perfumes",
+    "EDIT_TITLE": "Tu perfil olfativo",
+    "SKIN_TYPE": "Tipo de piel",
+    "PREFERRED_DURATION": "Duración preferida",
+    "PREFERRED_PROJECTION": "Proyección preferida",
+    "CLIMATE": "Clima habitual",
+    "SAVE": "Guardar cambios",
+    "SAVED": "✓ Guardado",
+    "COLLECTION": "Colección",
+    "WISHLIST": "Wishlist",
+    "FAVORITES": "Favoritos",
+    "SHELF_EMPTY": "Todavía no tienes perfumes aquí.",
+    "EXPLORE_CTA": "Explorar perfumes",
+    "LOGOUT": "Cerrar sesión"
+  },
+  "PREFERRED_DURATION": { "SHORT": "Corta", "MODERATE": "Moderada", "LONG": "Larga", "VERY_LONG": "Muy larga" },
+  "CLIMATE": { "HOT": "Caluroso", "TEMPERATE": "Templado", "COLD": "Frío", "VARIABLE": "Variable" },
+  "SKIN_TYPE": { "DRY": "Piel seca", "OILY": "Piel grasa", "COMBINATION": "Piel mixta", "BALANCED": "Piel equilibrada", "UNKNOWN": "Piel sin definir" },
+  "PROJECTION": { "INTIMATE": "Íntima", "MODERATE": "Moderada", "STRONG": "Fuerte", "ENORMOUS": "Enorme" },
+  "REVIEW": {
+    "WRITE_CTA": "Escribir reseña",
+    "HOW_WAS_IT": "¿Qué tal te fue?",
+    "LIKED": "Me gustó",
+    "DISLIKED": "No me gustó",
+    "RATING": "Rating",
+    "DURATION": "Duración",
+    "PROJECTION": "Proyección",
+    "COMMENT": "Tu experiencia",
+    "PUBLISH": "Publicar reseña"
+  },
+  "SHELF": {
+    "MARK_OWNED": "Tengo",
+    "OWNED_DONE": "✓ En tu colección",
+    "MARK_TESTED": "Probé",
+    "TESTED_DONE": "✓ Marcado como probado"
+  }
+}

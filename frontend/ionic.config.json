@@ -1,0 +1,5 @@
+{
+  "name": "olfatto",
+  "integrations": { "capacitor": {} },
+  "type": "angular"
+}

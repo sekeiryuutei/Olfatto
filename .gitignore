@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment files (never commit real secrets)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+!.env.example
+
+# Build output
+dist/
+build/
+www/
+.angular/
+*.tsbuildinfo
+
+# Testing
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+logs/
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes data (if bind-mounted locally)
+database/pgdata/
+
+# PWA generated
+frontend/src/ngsw-config.json.bak

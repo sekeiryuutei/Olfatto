@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import '@ionic/angular/css/core.css';
+@import '@ionic/angular/css/normalize.css';
+@import '@ionic/angular/css/structure.css';
+@import '@ionic/angular/css/typography.css';
+@import '@ionic/angular/css/display.css';
+@import '@ionic/angular/css/padding.css';
+@import '@ionic/angular/css/flex-utils.css';
+@import 'theme/variables.scss';
+
+// Point 5: Cormorant Garamond only for brand name / editorial titles —
+// never for body copy, buttons or data (that stays Inter, Tailwind's default).
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap');
+
+.font-display {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+body {
+  background: var(--ol-bg);
+  color: var(--ol-text-primary);
+}
+
+// Point 6.4: elevation via contrast/border/blur — never heavy drop shadows.
+.ol-elevated {
+  background: var(--ol-surface-elevated);
+  border: 1px solid var(--ol-border);
+  backdrop-filter: blur(12px);
+}

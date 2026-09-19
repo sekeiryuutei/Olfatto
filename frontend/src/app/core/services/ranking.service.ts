@@ -23,7 +23,10 @@ export class RankingService {
   private readonly baseUrl = `${environment.apiUrl}/rankings`;
 
   getRanking(tab: RankingTab, skinType?: string): Observable<PaginatedEnvelope<RankedFragrance>> {
-    const params = tab === 'skin' && skinType ? { skinType } : {};
+    const params: Record<string, string> = {};
+    if (tab === 'skin' && skinType) {
+      params['skinType'] = skinType;
+    }
     return this.http.get<PaginatedEnvelope<RankedFragrance>>(`${this.baseUrl}/${tab}`, { params });
   }
 }

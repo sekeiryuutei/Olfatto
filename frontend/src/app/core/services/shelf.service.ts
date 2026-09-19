@@ -3,10 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 
-export enum CollectionStatus {
-  OWNED = 'OWNED',
-  TESTED = 'TESTED',
-}
+export type CollectionStatus = 'OWNED' | 'TESTED';
 
 export interface ShelfEntry {
   fragranceId: string;

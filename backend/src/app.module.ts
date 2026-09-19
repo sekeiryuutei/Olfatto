@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import configuration, { AppConfig } from '@config/configuration';
@@ -22,16 +22,27 @@ import { CollectionModule } from '@modules/collection/collection.module';
 
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService<AppConfig, true>) => ({
-        ...typeOrmConfig,
-        // typeOrmConfig already reads from process.env for the CLI; here we
-        // go through Nest's ConfigService so tests can override values.
-        host: configService.get('database', { infer: true }).host,
-        port: configService.get('database', { infer: true }).port,
-        username: configService.get('database', { infer: true }).user,
-        password: configService.get('database', { infer: true }).password,
-        database: configService.get('database', { infer: true }).name,
-      }),
+      // Explicit TypeOrmModuleOptions return type + a literal `type: 'postgres'`
+      // below (rather than spreading typeOrmConfig, which is typed as the very
+      // wide DataSourceOptions union) — spreading it made TS try to match an
+      // unrelated union member (sqljs) and fail. Building the object directly
+      // keeps `type` narrowed to the literal the postgres driver expects.
+      useFactory: (configService: ConfigService<AppConfig, true>): TypeOrmModuleOptions => {
+        const db = configService.get('database', { infer: true });
+        return {
+          type: 'postgres',
+          host: db.host,
+          port: db.port,
+          username: db.user,
+          password: db.password,
+          database: db.name,
+          entities: typeOrmConfig.entities,
+          migrations: typeOrmConfig.migrations,
+          migrationsTableName: typeOrmConfig.migrationsTableName,
+          synchronize: false,
+          logging: typeOrmConfig.logging,
+        };
+      },
     }),
 
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]), // global default; endpoints can override with @Throttle()

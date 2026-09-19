@@ -121,4 +121,9 @@ export class CompatibilityScoreCalculatorService {
     if (distance < 2.5) return 0.3;
     return 0.1;
   }
+
+  private ratingScore(avgRating: number | null): number {
+    if (avgRating == null) return 0.5; // no data yet — neutral, not punitive
+    return Math.min(1, avgRating / 5);
+  }
 }

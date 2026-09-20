@@ -16,17 +16,22 @@ import { FAMILY_REPOSITORY } from './domain/repositories/family.repository.port'
 import { FRAGRANCE_STATS_REPOSITORY } from './domain/repositories/fragrance-stats.repository.port';
 import { FragrancePerformanceCalculatorService } from './domain/services/fragrance-performance-calculator.service';
 import { FragrancesController } from './infrastructure/http/fragrances.controller';
+import { CatalogReferenceController } from './infrastructure/http/catalog-reference.controller';
 import { CreateFragranceUseCase } from './application/use-cases/create-fragrance.use-case';
 import { UpdateFragranceUseCase } from './application/use-cases/update-fragrance.use-case';
 import { DeleteFragranceUseCase } from './application/use-cases/delete-fragrance.use-case';
 import { GetFragranceDetailsUseCase } from './application/use-cases/get-fragrance-details.use-case';
 import { ListFragrancesUseCase } from './application/use-cases/list-fragrances.use-case';
+import { ListBrandsUseCase } from './application/use-cases/list-brands.use-case';
+import { CreateBrandUseCase } from './application/use-cases/create-brand.use-case';
+import { ListFamiliesUseCase } from './application/use-cases/list-families.use-case';
+import { ListNotesUseCase } from './application/use-cases/list-notes.use-case';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([FragranceOrmEntity, BrandOrmEntity, NoteOrmEntity, FamilyOrmEntity]),
   ],
-  controllers: [FragrancesController],
+  controllers: [FragrancesController, CatalogReferenceController],
   providers: [
     { provide: FRAGRANCE_REPOSITORY, useClass: PostgresFragranceRepository },
     { provide: BRAND_REPOSITORY, useClass: PostgresBrandRepository },
@@ -39,6 +44,10 @@ import { ListFragrancesUseCase } from './application/use-cases/list-fragrances.u
     DeleteFragranceUseCase,
     GetFragranceDetailsUseCase,
     ListFragrancesUseCase,
+    ListBrandsUseCase,
+    CreateBrandUseCase,
+    ListFamiliesUseCase,
+    ListNotesUseCase,
   ],
   // Exported so the Reviews module (and, later, Rankings/Recommendations)
   // can validate a fragranceId exists without duplicating queries.

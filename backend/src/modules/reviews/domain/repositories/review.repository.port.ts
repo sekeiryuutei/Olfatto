@@ -15,6 +15,8 @@ export interface ListFragranceReviewsParams {
 export interface ReviewListItem {
   review: Review;
   helpfulCount: number;
+  authorName: string;
+  authorAvatarUrl: string | null;
 }
 
 export interface ReviewRepository {

@@ -2,24 +2,19 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  OneToOne,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserOrmEntity } from './user.orm-entity';
 
 @Entity('user_profiles')
 export class UserProfileOrmEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'user_id', type: 'uuid', unique: true })
+  @Column({ name: 'user_id', type: 'uuid' })
+  @Index({ unique: true })
   userId: string;
-
-  @OneToOne(() => UserOrmEntity, (user) => user.profile, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  user: UserOrmEntity;
 
   @Column({ name: 'skin_type', type: 'varchar', default: 'UNKNOWN' })
   skinType: string;

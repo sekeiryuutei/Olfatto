@@ -58,6 +58,11 @@ type LoadState = 'loading' | 'success' | 'error';
     </ion-header>
 
     <ion-content>
+      @if (shelfMessage()) {
+        <div class="fixed top-3 left-4 right-4 z-50 bg-danger/90 text-white text-xs rounded-button px-3 py-2 text-center">
+          {{ shelfMessage() | translate }}
+        </div>
+      }
       @switch (state()) {
         @case ('loading') {
           <div class="animate-pulse px-4 space-y-4">
@@ -288,27 +293,44 @@ type LoadState = 'loading' | 'success' | 'error';
                   </form>
                 }
 
+                <h2 class="text-sm font-medium text-text-primary mt-8 mb-1">{{ 'FRAGRANCE.TOP_REVIEWS' | translate }}</h2>
+                <p class="text-text-muted text-[11px] mb-3">{{ 'FRAGRANCE.TOP_REVIEWS_HINT' | translate }}</p>
+
                 @if (reviews().length === 0) {
                   <app-empty-state icon="✍️" [message]="'FRAGRANCE.NO_REVIEWS_YET' | translate"></app-empty-state>
                 } @else {
                   <div class="space-y-3">
                     @for (r of reviews(); track r.id) {
                       <div class="ol-elevated rounded-card p-3">
-                        <div class="flex items-center justify-between mb-2">
-                          <app-skin-type-badge [skinType]="r.skinTypeSnapshot"></app-skin-type-badge>
-                          <span class="text-primary text-xs">★ {{ r.rating.toFixed(1) }}</span>
+                        <div class="flex items-center gap-2 mb-2">
+                          @if (r.authorAvatarUrl) {
+                            <img [src]="r.authorAvatarUrl" class="w-7 h-7 rounded-full object-cover" [alt]="r.authorName ?? ''" />
+                          } @else {
+                            <div class="w-7 h-7 rounded-full bg-surface border border-border flex items-center justify-center text-xs text-primary shrink-0">
+                              {{ (r.authorName ?? '?')[0] }}
+                            </div>
+                          }
+                          <span class="text-sm text-text-primary font-medium flex-1 truncate">{{ r.authorName }}</span>
+                          <span class="text-primary text-xs shrink-0">★ {{ r.rating.toFixed(1) }}</span>
                         </div>
-                        <div class="flex items-center gap-3 text-[11px] text-text-muted mb-2">
-                          <span>⏱ {{ r.durationHours }}h</span>
+                        <div class="flex items-center gap-2 mb-2">
+                          <app-skin-type-badge [skinType]="r.skinTypeSnapshot"></app-skin-type-badge>
                           <app-projection-badge [projection]="r.projection"></app-projection-badge>
+                          <span class="text-[11px] text-text-muted">⏱ {{ r.durationHours }}h</span>
                         </div>
                         @if (r.comment) {
-                          <p class="text-text-secondary text-sm">{{ r.comment }}</p>
+                          <p class="text-text-secondary text-sm mb-2">{{ r.comment }}</p>
                         }
-                        <div class="flex items-center gap-1 mt-2 text-text-muted text-xs">
-                          <ion-icon name="heart-outline"></ion-icon>
-                          <span>{{ r.helpfulCount }}</span>
-                        </div>
+                        <button
+                          type="button"
+                          (click)="toggleHelpful(r)"
+                          class="flex items-center gap-1.5 text-xs"
+                          [class.text-primary]="markedHelpful().has(r.id)"
+                          [class.text-text-muted]="!markedHelpful().has(r.id)"
+                        >
+                          <ion-icon [name]="markedHelpful().has(r.id) ? 'heart' : 'heart-outline'"></ion-icon>
+                          <span>{{ r.helpfulCount }} · {{ 'REVIEW.HELPFUL' | translate }}</span>
+                        </button>
                       </div>
                     }
                   </div>
@@ -333,6 +355,8 @@ export class FragranceDetailPage {
   readonly state = signal<LoadState>('loading');
   readonly isFavorite = signal(false);
   readonly collectionStatus = signal<CollectionStatus | null>(null);
+  readonly shelfMessage = signal('');
+  readonly markedHelpful = signal<Set<string>>(new Set());
 
   readonly projectionOptions = Object.values(ProjectionLevel);
   readonly showComposer = signal(false);
@@ -374,7 +398,12 @@ export class FragranceDetailPage {
     const action = next
       ? this.shelfService.addFavorite(this.fragranceId)
       : this.shelfService.removeFavorite(this.fragranceId);
-    action.subscribe({ error: () => this.isFavorite.set(!next) });
+    action.subscribe({
+      error: () => {
+        this.isFavorite.set(!next);
+        this.flashShelfMessage('SHELF.ERROR');
+      },
+    });
   }
 
   setCollectionStatus(status: CollectionStatus): void {
@@ -387,7 +416,35 @@ export class FragranceDetailPage {
     const action = next
       ? this.shelfService.addToCollection(this.fragranceId, next)
       : this.shelfService.removeFromCollection(this.fragranceId);
-    action.subscribe({ error: () => this.collectionStatus.set(previous) });
+    action.subscribe({
+      error: () => {
+        this.collectionStatus.set(previous);
+        this.flashShelfMessage('SHELF.ERROR');
+      },
+    });
+  }
+
+  toggleHelpful(review: Review): void {
+    const marked = this.markedHelpful();
+    const alreadyMarked = marked.has(review.id);
+    const action = alreadyMarked
+      ? this.reviewService.unmarkHelpful(review.id)
+      : this.reviewService.markHelpful(review.id);
+
+    action.subscribe({
+      next: () => {
+        const updated = new Set(marked);
+        alreadyMarked ? updated.delete(review.id) : updated.add(review.id);
+        this.markedHelpful.set(updated);
+        review.helpfulCount += alreadyMarked ? -1 : 1;
+      },
+      error: () => this.flashShelfMessage('REVIEW.HELPFUL_ERROR'),
+    });
+  }
+
+  private flashShelfMessage(key: string): void {
+    this.shelfMessage.set(key);
+    setTimeout(() => this.shelfMessage.set(''), 3000);
   }
 
   submitReview(): void {

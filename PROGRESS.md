@@ -1,63 +1,29 @@
 # Estado de avance — Olfatto
 
-Última actualización: MVP completo (punto 88 del spec). Léelo antes de pedir cambios para saber qué asumí y por qué.
+Última actualización: tras la primera ronda de bugs reales (registro, listado de fragancias) + reseñas con autor/útil + creación de fragancias por usuarios + avatar por URL.
 
-## ✅ Checklist del MVP (punto 88) — completo
+## 🐛 Bugs reales corregidos esta ronda
 
-```
-✓ Registro/Login        (email+password, Google OAuth, refresh rotativo)
-✓ Perfil                (ver + editar: tipo de piel, duración/proyección preferida, clima)
-✓ Catálogo              (grid, imágenes, rating, duración)
-✓ Búsqueda              (por nombre, con debounce)
-✓ Detalle de perfume    (hero, métricas, notas, familias)
-✓ Reviews               (ver Y crear — rating, duración, proyección, like, comentario 280c)
-✓ Duración              (histograma de distribución, no solo promedio)
-✓ Proyección            (badges, dominante por piel)
-✓ Tipo de piel          (rendimiento por piel en el detalle + ranking "Mi piel")
-✓ Estadísticas          (todo lo anterior, agregado)
-✓ Rankings              (Global / Mi piel / Duración — media bayesiana real)
-✓ Wishlist              (agregar/quitar desde el catálogo y el detalle)
-✓ Colección             (Tengo/Probé desde el detalle, tabs en Perfil)
-✓ Recomendaciones       (compatibility score real basado en reglas, "Para tu piel" en Home)
-✓ PWA                   (manifest, service worker Angular, i18n es/en)
-✓ Responsive            (mobile-first; ver limitación abajo)
-✓ Docker                (dev + prod, healthchecks, Nginx)
-✓ PostgreSQL            (9 migraciones, 14 tablas, sin synchronize)
-✓ Swagger               (/api/v1/docs, todos los endpoints documentados)
-✓ Tests básicos         (4 suites: Review, FragrancePerformanceCalculator, RankingCalculator, CompatibilityScoreCalculator)
-```
+1. **Registro fallaba ("No pudimos crear tu cuenta")**: `UserProfileOrmEntity` tenía DOS mapeos a la misma columna `user_id` — una `@Column` manual y una relación `@OneToOne` + `@JoinColumn` que nunca se seteaba. TypeORM priorizaba la relación (vacía) sobre el valor real, escribiendo NULL en una columna `UNIQUE NOT NULL` y rompiendo el INSERT. Saqué la relación de ambos lados (`User` y `UserProfile`) — en todo el código siempre trabajé con `userId` directo, nunca con el grafo de relación, así que no se perdió nada.
+2. **`GET /fragrances` 500 (`SELECT DISTINCT... ORDER BY`)**: exactamente lo que diagnosticaste — `.skip()/.take()` activa el modo de paginación "inteligente" de TypeORM (DISTINCT + subquery) cuando hay joins, y ese modo exige que el `ORDER BY` esté en el `SELECT`. Cambié a `.offset()/.limit()` (SQL crudo, sin ese envoltorio) en `postgres-fragrance.repository.ts` **y** en `postgres-review.repository.ts` (mismo bug, se iba a disparar apenas alguien ordenara reseñas por "más útil" — lo até antes de que lo reportaras).
 
-Backend: **7 módulos completos** (auth, users, fragrances, reviews, rankings, recommendations, collection), los 7 con Domain → Application → Infrastructure real, sin lógica de negocio en Controllers ni SQL en Use Cases (punto 92).
+## ✅ Nuevo esta ronda
 
-## ⚠️ Limitaciones conocidas (léelas antes de reportar un "bug")
+- **Reseñas**: autor (nombre + avatar, con fallback a inicial) vía JOIN con `users`; botón "útil" funcional con contador (marca/desmarca, estado local de sesión ya que el endpoint de listado es público y no sabe quién sos); orden por defecto ahora es "más relevantes" (más útiles primero) con límite configurable (top 10).
+- **Favoritos/Wishlist/Colección**: ya estaban conectados desde la entrega anterior — lo que agregué es feedback visible cuando falla algo (antes revertía en silencio, por eso probablemente parecía que "no hacía nada" mientras el backend estaba roto por los bugs de arriba).
+- **Crear fragancias**: cualquier usuario autenticado puede publicar una fragancia nueva (antes era solo ADMIN). Pantalla completa en `/fragrances/create` (el botón `+` del nav ahora lleva ahí): nombre, marca (elegís una existente o creás una nueva al vuelo), concentración, género, año, imagen por URL, descripción, familias y notas. Nuevos endpoints `GET/POST /brands`, `GET /families`, `GET /notes`.
+- **Avatar**: `PATCH /users/me` ya soportaba `avatarUrl` desde el principio — lo que faltaba era la UI. Ahora en Perfil podés tocar tu avatar y pegar una URL de imagen.
+- **Imágenes de fragancias**: el seed nunca las cargaba — ahora sí (placeholders genéricos con el nombre de cada perfume, no fotos reales de producto). Si ya tenés datos cargados, corré `update-existing-images.sql` (adjunto) para no perder tus reseñas re-seedeando.
 
-- **No compilé nada.** Este sandbox no tiene red — no pude correr `npm install` ni `tsc` ni `ng build`. Todo el código sigue las convenciones exactas de NestJS/TypeORM/Angular, pero hay una chance real de un typo o import mal resuelto en el primer build. Pegame el error y lo arreglo al toque.
-- **El corazón de Wishlist en las cards del catálogo solo refleja lo que tocaste en esta sesión** — el endpoint de listado no devuelve el estado de wishlist por fragancia todavía, así que si ya tenías algo en wishlist de antes, la card lo muestra sin marcar hasta que la toques de nuevo. Arreglarlo implica sumar ese dato a `GET /fragrances`.
-- **Responsive es mobile-first pero no tiene breakpoints explícitos** para tablet/desktop (grid siempre a 2 columnas). Funciona en desktop, pero no aprovecha el espacio como describe el punto 47.
-- **Iconos PWA** (`favicon.png`, `icon-192.png`, `icon-512.png`) son binarios que no generé — agregalos en `frontend/src/assets/icon/`.
-- **"Mis reseñas" en el tab de Perfil** todavía no tiene endpoint dedicado — el contador de reseñas se queda en 0.
-- **Tests básicos = 4 suites de dominio**, no cobertura completa. No hay tests de Use Cases, Controllers, Repositories, ni frontend.
-- **No hay E2E.**
+## ⚠️ Pendiente de lo que pediste
 
-## ❌ Explícitamente fuera de este MVP (por diseño, no por tiempo)
+- **Subir foto de perfil como archivo real**: lo que hay hoy es pegar una URL. Subida real (`<input type="file">` → backend con Multer → almacenamiento) es más trabajo de infraestructura (storage, servir estático) que no llegué a hacer esta ronda.
+- **Fotos reales de las lociones**: la plomería ya funciona (mostrás lo que sea que esté en `imageUrl`), pero las URLs son placeholders — necesitás fotos con licencia real para producción.
 
-El propio punto 88 del spec los excluye del MVP: Chat, Marketplace, Pagos, IA avanzada, Microservicios, Kafka/RabbitMQ, Redis obligatorio, Gamificación avanzada. El punto 71 dice Admin se crea "posteriormente". Ninguno de estos se tocó — es intencional, no un recorte silencioso.
+## Checklist del punto 88 — sigue completo, con lo de arriba ahora más sólido
 
-## Decisiones de diseño que tomé sin preguntarte
+Nada del checklist en sí cambió de estado (ya estaba todo implementado), pero **Reviews**, **Wishlist/Colección** y **Recomendaciones** pasaron de "conectado pero posiblemente roto en silencio" a "con manejo de errores visible y bugs de fondo corregidos". Sigue pendiente lo mismo que ya estaba documentado: breakpoints responsive de tablet/desktop, más tests, subida real de archivos, Admin (fuera de MVP por diseño).
 
-- **ORM**: TypeORM.
-- **Password reset**: token JWT firmado de un solo uso (no hay tabla `password_reset_tokens` en el punto 30).
-- **`retention_level` vs `preferred_duration`**: el primero = qué tan importante te es la duración (onboarding, punto 9); el segundo = la duración que preferís. El punto 32 los lista separados sin explicar la diferencia.
-- **Favorites**: endpoint `/users/me/favorites` agregado por simetría con la tabla del punto 30 (no estaba en el punto 35).
-- **Una reseña activa por usuario por fragancia** (interpretación del punto 70).
-- **Tokens de sesión en `localStorage`**, no cookie httpOnly — más simple para MVP, cambiarlo es un endurecimiento razonable antes de producción real.
-- **Recomendaciones**: score ponderado (familia 35%, duración 30%, proyección 20%, rating 15%), con fallback a stats globales cuando no hay datos de reseñas para tu tipo de piel específico todavía.
+## Cómo seguir
 
-## Cómo seguir desde acá
-
-Con el MVP funcional, lo siguiente en valor sería (en orden):
-1. Que lo instales y me reportes errores de compilación/runtime — es lo único que de verdad no puedo verificar yo.
-2. Breakpoints responsive reales (punto 47).
-3. Wishlist-aware catalog listing (arreglar la limitación de arriba).
-4. Más tests (Use Cases, al menos un E2E del flujo registro→review).
-5. Admin (punto 71) y todo lo del punto 88 marcado como "no incluir inicialmente", si en algún momento lo querés.
+Decime qué probaste y qué encontraste — con el registro y el listado de fragancias arreglados, deberías poder recorrer el flujo completo (registro → catálogo → detalle → reseña → útil → favoritos/wishlist → crear fragancia → perfil) sin choques. Si algo sigue fallando, pegame el log del backend tal como la vez pasada — ahí está la respuesta siempre.

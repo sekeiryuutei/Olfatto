@@ -116,7 +116,7 @@ export class PostgresFragranceRepository implements FragranceRepository {
         break;
     }
 
-    qb.skip((page - 1) * limit).take(limit);
+    qb.offset((page - 1) * limit).limit(limit);
 
     const { entities, raw } = await qb.getRawAndEntities();
 

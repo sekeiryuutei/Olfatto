@@ -35,9 +35,32 @@ type ShelfTab = 'collection' | 'wishlist' | 'favorites';
       <div class="px-4 pt-6 pb-24 max-w-2xl mx-auto">
         <!-- point 26 header -->
         <div class="flex flex-col items-center text-center mb-6">
-          <div class="w-20 h-20 rounded-full bg-surface border border-border flex items-center justify-center mb-3">
-            <span class="font-display text-2xl text-primary">{{ (authService.currentUser()?.name ?? '?')[0] }}</span>
-          </div>
+          <button type="button" (click)="editingAvatar.set(!editingAvatar())" class="relative">
+            @if (authService.currentUser()?.avatarUrl) {
+              <img [src]="authService.currentUser()?.avatarUrl" class="w-20 h-20 rounded-full object-cover mb-3" />
+            } @else {
+              <div class="w-20 h-20 rounded-full bg-surface border border-border flex items-center justify-center mb-3">
+                <span class="font-display text-2xl text-primary">{{ (authService.currentUser()?.name ?? '?')[0] }}</span>
+              </div>
+            }
+            <span class="absolute bottom-3 right-0 w-6 h-6 rounded-full bg-primary text-bg text-xs flex items-center justify-center">✎</span>
+          </button>
+
+          @if (editingAvatar()) {
+            <div class="flex gap-2 w-full max-w-xs mb-3">
+              <input
+                type="url"
+                [(ngModel)]="avatarUrlInput"
+                placeholder="https://..."
+                class="flex-1 px-3 py-2 rounded-button bg-surface border border-border text-xs text-text-primary outline-none focus:border-primary"
+              />
+              <button type="button" (click)="saveAvatar()" class="px-3 rounded-button bg-primary text-bg text-xs font-medium">
+                {{ 'PROFILE.SAVE' | translate }}
+              </button>
+            </div>
+            <p class="text-text-muted text-[11px] mb-3 -mt-1">{{ 'PROFILE.AVATAR_HINT' | translate }}</p>
+          }
+
           <p class="text-lg font-medium text-text-primary">{{ authService.currentUser()?.name }}</p>
           @if (profile(); as p) {
             <p class="text-text-secondary text-sm">{{ 'SKIN_TYPE.' + p.skinType | translate }}</p>
@@ -172,6 +195,8 @@ export class ProfilePage {
 
   readonly profile = signal<UserProfile | null>(null);
   readonly saved = signal(false);
+  readonly editingAvatar = signal(false);
+  avatarUrlInput = '';
 
   editSkinType: SkinType = SkinType.UNKNOWN;
   editPreferredDuration: PreferredDuration = PreferredDuration.MODERATE;
@@ -197,6 +222,15 @@ export class ProfilePage {
   setShelfTab(tab: ShelfTab): void {
     this.shelfTab.set(tab);
     this.loadShelf();
+  }
+
+  saveAvatar(): void {
+    if (!this.avatarUrlInput.trim()) return;
+    this.userService.updateMe({ avatarUrl: this.avatarUrlInput.trim() }).subscribe((user) => {
+      this.authService.updateCachedUser({ avatarUrl: user.avatarUrl });
+      this.editingAvatar.set(false);
+      this.avatarUrlInput = '';
+    });
   }
 
   saveProfile(): void {

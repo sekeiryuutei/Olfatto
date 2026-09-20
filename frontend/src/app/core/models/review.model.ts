@@ -11,6 +11,8 @@ export interface Review {
   comment: string | null;
   skinTypeSnapshot: SkinType;
   helpfulCount: number;
+  authorName: string | null;
+  authorAvatarUrl: string | null;
   createdAt: string;
 }
 

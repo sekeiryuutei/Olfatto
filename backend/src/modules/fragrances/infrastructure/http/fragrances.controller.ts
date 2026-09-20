@@ -97,8 +97,7 @@ export class FragrancesController {
 
   @Post()
   @ApiBearerAuth('access-token')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard)
   async create(@Body() dto: CreateFragranceDto) {
     const fragrance = await this.createFragranceUseCase.execute(dto);
     return { id: fragrance.id, name: fragrance.name };

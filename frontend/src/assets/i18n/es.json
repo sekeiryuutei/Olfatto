@@ -31,7 +31,9 @@
     "NOTES": "Notas",
     "DURATION_DISTRIBUTION": "Duración experimentada",
     "SKIN_PERFORMANCE": "¿Cómo funciona en diferentes pieles?",
-    "NO_REVIEWS_YET": "Todavía no hay reseñas para este perfume."
+    "NO_REVIEWS_YET": "Todavía no hay reseñas para este perfume.",
+    "TOP_REVIEWS": "Reseñas más relevantes",
+    "TOP_REVIEWS_HINT": "Ordenadas por cuántas personas las marcaron como útiles"
   },
   "CATALOG": {
     "SORT": {
@@ -55,6 +57,7 @@
   "PROFILE": {
     "FRAGRANCES": "perfumes",
     "EDIT_TITLE": "Tu perfil olfativo",
+    "AVATAR_HINT": "Pegá el link de una imagen (subida de archivo real: próximamente).",
     "SKIN_TYPE": "Tipo de piel",
     "PREFERRED_DURATION": "Duración preferida",
     "PREFERRED_PROJECTION": "Proyección preferida",
@@ -81,12 +84,34 @@
     "DURATION": "Duración",
     "PROJECTION": "Proyección",
     "COMMENT": "Tu experiencia",
-    "PUBLISH": "Publicar reseña"
+    "PUBLISH": "Publicar reseña",
+    "HELPFUL": "útil",
+    "HELPFUL_ERROR": "No pudimos registrar tu voto. Intentá de nuevo."
   },
   "SHELF": {
     "MARK_OWNED": "Tengo",
     "OWNED_DONE": "✓ En tu colección",
     "MARK_TESTED": "Probé",
-    "TESTED_DONE": "✓ Marcado como probado"
+    "TESTED_DONE": "✓ Marcado como probado",
+    "ERROR": "No pudimos guardar el cambio. Revisá tu conexión e intentá de nuevo."
+  },
+  "GENDER": { "MASCULINE": "Masculino", "FEMININE": "Femenino", "UNISEX": "Unisex" },
+  "CREATE_FRAGRANCE": {
+    "TITLE": "Nueva fragancia",
+    "SUBTITLE": "Agregá un perfume que no esté en el catálogo.",
+    "NAME": "Nombre",
+    "BRAND": "Marca",
+    "SELECT_BRAND": "Elegí una marca",
+    "NEW_BRAND_CTA": "+ Agregar marca nueva",
+    "NEW_BRAND_PLACEHOLDER": "Nombre de la marca",
+    "USE_EXISTING_BRAND_CTA": "Elegir de la lista",
+    "CONCENTRATION": "Concentración",
+    "GENDER": "Género",
+    "RELEASE_YEAR": "Año de lanzamiento",
+    "IMAGE_URL": "URL de la imagen",
+    "DESCRIPTION": "Descripción",
+    "FAMILIES": "Familias olfativas",
+    "NOTES": "Notas",
+    "SUBMIT": "Publicar fragancia"
   }
 }

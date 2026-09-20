@@ -43,6 +43,9 @@ export class PostgresReviewRepository implements ReviewRepository {
     const qb = this.repo
       .createQueryBuilder('review')
       .where('review.fragrance_id = :fragranceId', { fragranceId })
+      .leftJoin('users', 'author', 'author.id = review.user_id')
+      .addSelect('author.name', 'authorName')
+      .addSelect('author.avatar_url', 'authorAvatarUrl')
       .leftJoin(
         (sub) =>
           sub
@@ -70,13 +73,15 @@ export class PostgresReviewRepository implements ReviewRepository {
         break;
     }
 
-    qb.skip((page - 1) * limit).take(limit);
+    qb.offset((page - 1) * limit).limit(limit);
 
     const { entities, raw } = await qb.getRawAndEntities();
 
     const items: ReviewListItem[] = entities.map((entity, index) => ({
       review: ReviewMapper.toDomain(entity),
       helpfulCount: parseInt(String(raw[index].helpfulCount ?? 0), 10),
+      authorName: String(raw[index].authorName ?? 'Usuario de Olfatto'),
+      authorAvatarUrl: raw[index].authorAvatarUrl ?? null,
     }));
 
     return { items, total };

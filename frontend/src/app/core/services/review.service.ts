@@ -5,18 +5,23 @@ import { environment } from '@env/environment';
 import { ApiEnvelope, PaginatedEnvelope } from '../models/api.model';
 import { CreateReviewPayload, Review } from '../models/review.model';
 
+export type ReviewSortBy = 'mostRecent' | 'mostHelpful' | 'longestLasting';
+
 @Injectable({ providedIn: 'root' })
 export class ReviewService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 
+  // Default to 'mostHelpful' — "las más relevantes primero" — with a
+  // limit the caller can cap (e.g. 10 for a "top reviews" section).
   listForFragrance(
     fragranceId: string,
-    sortBy: 'mostRecent' | 'mostHelpful' | 'longestLasting' = 'mostRecent',
+    sortBy: ReviewSortBy = 'mostHelpful',
+    limit = 20,
   ): Observable<PaginatedEnvelope<Review>> {
     return this.http.get<PaginatedEnvelope<Review>>(
       `${this.apiUrl}/fragrances/${fragranceId}/reviews`,
-      { params: { sortBy } },
+      { params: { sortBy, limit: String(limit) } },
     );
   }
 
@@ -28,5 +33,9 @@ export class ReviewService {
 
   markHelpful(reviewId: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/reviews/${reviewId}/helpful`, {});
+  }
+
+  unmarkHelpful(reviewId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/reviews/${reviewId}/helpful`);
   }
 }

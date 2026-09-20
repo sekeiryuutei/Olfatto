@@ -3,7 +3,25 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '@env/environment';
 import { ApiEnvelope, PaginatedEnvelope } from '../models/api.model';
-import { FragranceDetail, FragranceFilters, FragranceSummary } from '../models/fragrance.model';
+import {
+  Concentration,
+  FragranceDetail,
+  FragranceFilters,
+  FragranceGender,
+  FragranceSummary,
+} from '../models/fragrance.model';
+
+export interface CreateFragrancePayload {
+  name: string;
+  brandId: string;
+  concentration: Concentration;
+  gender: FragranceGender;
+  releaseYear?: number;
+  description?: string;
+  imageUrl?: string;
+  noteIds?: string[];
+  familyIds?: string[];
+}
 
 @Injectable({ providedIn: 'root' })
 export class FragranceService {
@@ -23,6 +41,12 @@ export class FragranceService {
   getById(id: string): Observable<FragranceDetail> {
     return this.http
       .get<ApiEnvelope<FragranceDetail>>(`${this.baseUrl}/${id}`)
+      .pipe(map((res) => res.data));
+  }
+
+  create(payload: CreateFragrancePayload): Observable<{ id: string; name: string }> {
+    return this.http
+      .post<ApiEnvelope<{ id: string; name: string }>>(this.baseUrl, payload)
       .pipe(map((res) => res.data));
   }
 }

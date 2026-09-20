@@ -27,7 +27,12 @@ import { QueryReviewsDto } from './dto/query-reviews.dto';
 import { Review } from '../../domain/entities/review.entity';
 import { ReviewListItem } from '../../domain/repositories/review.repository.port';
 
-function toReviewResponse(review: Review, helpfulCount = 0) {
+function toReviewResponse(
+  review: Review,
+  helpfulCount = 0,
+  authorName: string | null = null,
+  authorAvatarUrl: string | null = null,
+) {
   return {
     id: review.id,
     userId: review.userId,
@@ -39,6 +44,8 @@ function toReviewResponse(review: Review, helpfulCount = 0) {
     comment: review.comment,
     skinTypeSnapshot: review.skinTypeSnapshot,
     helpfulCount,
+    authorName,
+    authorAvatarUrl,
     createdAt: review.createdAt,
   };
 }
@@ -69,7 +76,7 @@ export class ReviewsController {
 
     return {
       items: result.items.map((item: ReviewListItem) =>
-        toReviewResponse(item.review, item.helpfulCount),
+        toReviewResponse(item.review, item.helpfulCount, item.authorName, item.authorAvatarUrl),
       ),
       meta: result.meta,
     };

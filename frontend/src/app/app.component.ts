@@ -40,7 +40,7 @@ addIcons({ home, homeOutline, compass, compassOutline, add, trophy, trophyOutlin
             <ion-icon name="compass-outline" class="text-xl"></ion-icon>
             <span>{{ 'NAV.EXPLORE' | translate }}</span>
           </a>
-          <a routerLink="/fragrances"
+          <a routerLink="/fragrances/create"
              class="flex items-center justify-center w-12 h-12 -mt-6 rounded-full
                     bg-primary text-bg shadow-lg">
             <ion-icon name="add" class="text-2xl"></ion-icon>

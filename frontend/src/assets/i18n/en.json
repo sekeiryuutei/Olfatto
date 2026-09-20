@@ -31,7 +31,9 @@
     "NOTES": "Notes",
     "DURATION_DISTRIBUTION": "Experienced duration",
     "SKIN_PERFORMANCE": "How does it perform on different skin types?",
-    "NO_REVIEWS_YET": "No reviews for this fragrance yet."
+    "NO_REVIEWS_YET": "No reviews for this fragrance yet.",
+    "TOP_REVIEWS": "Most relevant reviews",
+    "TOP_REVIEWS_HINT": "Sorted by how many people found them helpful"
   },
   "CATALOG": {
     "SORT": {
@@ -55,6 +57,7 @@
   "PROFILE": {
     "FRAGRANCES": "fragrances",
     "EDIT_TITLE": "Your scent profile",
+    "AVATAR_HINT": "Paste an image link (real file upload: coming soon).",
     "SKIN_TYPE": "Skin type",
     "PREFERRED_DURATION": "Preferred duration",
     "PREFERRED_PROJECTION": "Preferred projection",
@@ -81,12 +84,34 @@
     "DURATION": "Duration",
     "PROJECTION": "Projection",
     "COMMENT": "Your experience",
-    "PUBLISH": "Publish review"
+    "PUBLISH": "Publish review",
+    "HELPFUL": "helpful",
+    "HELPFUL_ERROR": "We couldn't register your vote. Try again."
   },
   "SHELF": {
     "MARK_OWNED": "I have it",
     "OWNED_DONE": "✓ In your collection",
     "MARK_TESTED": "Tried it",
-    "TESTED_DONE": "✓ Marked as tried"
+    "TESTED_DONE": "✓ Marked as tried",
+    "ERROR": "We couldn't save that. Check your connection and try again."
+  },
+  "GENDER": { "MASCULINE": "Masculine", "FEMININE": "Feminine", "UNISEX": "Unisex" },
+  "CREATE_FRAGRANCE": {
+    "TITLE": "New fragrance",
+    "SUBTITLE": "Add a perfume that isn't in the catalog yet.",
+    "NAME": "Name",
+    "BRAND": "Brand",
+    "SELECT_BRAND": "Choose a brand",
+    "NEW_BRAND_CTA": "+ Add a new brand",
+    "NEW_BRAND_PLACEHOLDER": "Brand name",
+    "USE_EXISTING_BRAND_CTA": "Choose from the list",
+    "CONCENTRATION": "Concentration",
+    "GENDER": "Gender",
+    "RELEASE_YEAR": "Release year",
+    "IMAGE_URL": "Image URL",
+    "DESCRIPTION": "Description",
+    "FAMILIES": "Olfactive families",
+    "NOTES": "Notes",
+    "SUBMIT": "Publish fragrance"
   }
 }

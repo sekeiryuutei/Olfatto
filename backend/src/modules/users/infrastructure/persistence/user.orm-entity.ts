@@ -1,12 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { UserProfileOrmEntity } from './user-profile.orm-entity';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('users')
 export class UserOrmEntity {
@@ -36,7 +28,4 @@ export class UserOrmEntity {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-
-  @OneToOne(() => UserProfileOrmEntity, (profile) => profile.user)
-  profile?: UserProfileOrmEntity;
 }

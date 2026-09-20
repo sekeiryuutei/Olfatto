@@ -89,6 +89,15 @@ export class AuthService {
     this.currentUser.set(null);
   }
 
+  /** Syncs a partial User update (e.g. a new avatar) into the cached session. */
+  updateCachedUser(partial: Partial<User>): void {
+    const current = this.currentUser();
+    if (!current) return;
+    const updated = { ...current, ...partial };
+    localStorage.setItem(USER_KEY, JSON.stringify(updated));
+    this.currentUser.set(updated);
+  }
+
   private readStoredUser(): User | null {
     const raw = localStorage.getItem(USER_KEY);
     return raw ? (JSON.parse(raw) as User) : null;

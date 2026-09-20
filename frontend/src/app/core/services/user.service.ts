@@ -14,6 +14,10 @@ export class UserService {
     return this.http.get<ApiEnvelope<User>>(this.baseUrl).pipe(map((res) => res.data));
   }
 
+  updateMe(payload: { name?: string; avatarUrl?: string }): Observable<User> {
+    return this.http.patch<ApiEnvelope<User>>(this.baseUrl, payload).pipe(map((res) => res.data));
+  }
+
   getProfile(): Observable<UserProfile> {
     return this.http
       .get<ApiEnvelope<UserProfile>>(`${this.baseUrl}/profile`)

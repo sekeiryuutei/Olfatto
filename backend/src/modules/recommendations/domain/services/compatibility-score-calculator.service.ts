@@ -17,6 +17,8 @@ export interface RecommendedFragrance {
   compatibilityScore: number; // 0-100
   averageDurationHours: number | null;
   dominantProjection: ProjectionLevel | null;
+  /** Human-readable reasons behind the score — surfaced in the Club "advanced recommendations" view. */
+  matchReasons: string[];
 }
 
 const PROJECTION_ORDINAL: Record<ProjectionLevel, number> = {
@@ -70,7 +72,37 @@ export class CompatibilityScoreCalculatorService {
       averageDurationHours: this.effectiveDuration(data),
       dominantProjection:
         projectionOrdinal != null ? ORDINAL_TO_PROJECTION[Math.round(projectionOrdinal) - 1] : null,
+      matchReasons: this.buildMatchReasons({
+        familyScore,
+        durationScore,
+        projectionScore,
+        profile,
+        effectiveDuration: this.effectiveDuration(data),
+      }),
     };
+  }
+
+  private buildMatchReasons(params: {
+    familyScore: number;
+    durationScore: number;
+    projectionScore: number;
+    profile: RecommendationProfile;
+    effectiveDuration: number | null;
+  }): string[] {
+    const reasons: string[] = [];
+    if (params.familyScore >= 1 && params.profile.preferredFamilyIds.length > 0) {
+      reasons.push('Coincide con una de tus familias olfativas preferidas.');
+    }
+    if (params.durationScore >= 0.8 && params.profile.preferredDuration && params.effectiveDuration != null) {
+      reasons.push(`Duración esperada de ${params.effectiveDuration.toFixed(1)}h, cerca de lo que preferís.`);
+    }
+    if (params.projectionScore >= 0.8 && params.profile.preferredProjection) {
+      reasons.push('La proyección esperada coincide con tu preferencia.');
+    }
+    if (reasons.length === 0) {
+      reasons.push('Buen puntaje general según reseñas de personas con tu tipo de piel.');
+    }
+    return reasons;
   }
 
   rankCandidates(

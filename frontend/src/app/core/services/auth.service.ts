@@ -41,6 +41,10 @@ export class AuthService {
     );
   }
 
+  changePassword(payload: { currentPassword: string; newPassword: string }): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/change-password`, payload);
+  }
+
   logout(): void {
     const refreshToken = this.getRefreshToken();
     if (refreshToken) {

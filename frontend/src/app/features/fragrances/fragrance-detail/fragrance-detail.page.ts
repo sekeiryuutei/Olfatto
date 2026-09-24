@@ -25,6 +25,7 @@ import { SkinTypeBadgeComponent } from '../../../shared/components/skin-type-bad
 import { ProjectionBadgeComponent } from '../../../shared/components/projection-badge/projection-badge.component';
 import { AppErrorStateComponent } from '../../../shared/components/app-error-state/app-error-state.component';
 import { AppEmptyStateComponent } from '../../../shared/components/app-empty-state/app-empty-state.component';
+import { placeholderImageDataUri } from '../../../shared/utils/placeholder-image';
 
 addIcons({ star, 'heart-outline': heartOutline, heart, close });
 
@@ -77,12 +78,13 @@ type LoadState = 'loading' | 'success' | 'error';
           @if (fragrance(); as f) {
             <div class="pb-24 max-w-2xl mx-auto">
               <!-- Hero -->
-              <div class="relative aspect-square bg-surface flex items-center justify-center mx-4 rounded-card overflow-hidden">
-                @if (f.imageUrl) {
-                  <img [src]="f.imageUrl" [alt]="f.name" class="w-full h-full object-cover" />
-                } @else {
-                  <span class="font-display text-6xl text-text-muted">{{ f.name[0] }}</span>
-                }
+              <div class="relative aspect-square bg-surface mx-4 rounded-card overflow-hidden">
+                <img
+                  [src]="heroImageFailed() || !f.imageUrl ? placeholderFor(f.name) : f.imageUrl"
+                  (error)="heroImageFailed.set(true)"
+                  [alt]="f.name"
+                  class="w-full h-full object-cover"
+                />
                 <button
                   type="button"
                   (click)="toggleFavorite()"
@@ -143,6 +145,19 @@ type LoadState = 'loading' | 'success' | 'error';
                     <p class="text-[11px] text-text-muted">{{ 'FRAGRANCE.YEAR' | translate }}</p>
                   </div>
                 </div>
+
+                @if (f.affiliateUrl) {
+                  <a
+                    [href]="f.affiliateUrl"
+                    target="_blank"
+                    rel="noopener sponsored"
+                    class="flex items-center justify-center gap-2 w-full mt-4 py-3 rounded-button
+                           bg-primary text-bg text-sm font-medium"
+                  >
+                    🛒 {{ 'FRAGRANCE.BUY_BEST_PRICE' | translate }}
+                  </a>
+                  <p class="text-text-muted text-[10px] text-center mt-1">{{ 'FRAGRANCE.AFFILIATE_DISCLOSURE' | translate }}</p>
+                }
 
                 @if (f.description) {
                   <p class="text-text-secondary text-sm mt-5 leading-relaxed">{{ f.description }}</p>
@@ -303,13 +318,12 @@ type LoadState = 'loading' | 'success' | 'error';
                     @for (r of reviews(); track r.id) {
                       <div class="ol-elevated rounded-card p-3">
                         <div class="flex items-center gap-2 mb-2">
-                          @if (r.authorAvatarUrl) {
-                            <img [src]="r.authorAvatarUrl" class="w-7 h-7 rounded-full object-cover" [alt]="r.authorName ?? ''" />
-                          } @else {
-                            <div class="w-7 h-7 rounded-full bg-surface border border-border flex items-center justify-center text-xs text-primary shrink-0">
-                              {{ (r.authorName ?? '?')[0] }}
-                            </div>
-                          }
+                          <img
+                            [src]="r.authorAvatarUrl && !failedAvatars().has(r.id) ? r.authorAvatarUrl : placeholderFor(r.authorName ?? '?')"
+                            (error)="markAvatarFailed(r.id)"
+                            class="w-7 h-7 rounded-full object-cover shrink-0"
+                            [alt]="r.authorName ?? ''"
+                          />
                           <span class="text-sm text-text-primary font-medium flex-1 truncate">{{ r.authorName }}</span>
                           <span class="text-primary text-xs shrink-0">★ {{ r.rating.toFixed(1) }}</span>
                         </div>
@@ -357,6 +371,18 @@ export class FragranceDetailPage {
   readonly collectionStatus = signal<CollectionStatus | null>(null);
   readonly shelfMessage = signal('');
   readonly markedHelpful = signal<Set<string>>(new Set());
+  readonly heroImageFailed = signal(false);
+  readonly failedAvatars = signal<Set<string>>(new Set());
+
+  placeholderFor(label: string): string {
+    return placeholderImageDataUri(label);
+  }
+
+  markAvatarFailed(reviewId: string): void {
+    const set = new Set(this.failedAvatars());
+    set.add(reviewId);
+    this.failedAvatars.set(set);
+  }
 
   readonly projectionOptions = Object.values(ProjectionLevel);
   readonly showComposer = signal(false);

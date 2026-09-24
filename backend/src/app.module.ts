@@ -15,6 +15,7 @@ import { ReviewsModule } from '@modules/reviews/reviews.module';
 import { RankingsModule } from '@modules/rankings/rankings.module';
 import { RecommendationsModule } from '@modules/recommendations/recommendations.module';
 import { CollectionModule } from '@modules/collection/collection.module';
+import { BillingModule } from '@modules/billing/billing.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { CollectionModule } from '@modules/collection/collection.module';
     RankingsModule,
     RecommendationsModule,
     CollectionModule,
+    BillingModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

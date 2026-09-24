@@ -9,6 +9,7 @@ import { SkinType } from '../../core/models/user.model';
 import { AppSkeletonComponent } from '../../shared/components/app-skeleton/app-skeleton.component';
 import { AppErrorStateComponent } from '../../shared/components/app-error-state/app-error-state.component';
 import { AppEmptyStateComponent } from '../../shared/components/app-empty-state/app-empty-state.component';
+import { placeholderImageDataUri } from '../../shared/utils/placeholder-image';
 
 type LoadState = 'loading' | 'success' | 'error' | 'empty';
 
@@ -79,7 +80,12 @@ const TABS: { value: RankingTab; labelKey: string }[] = [
                   [routerLink]="['/fragrances', item.fragranceId]"
                   class="flex items-center gap-3 p-3 rounded-card ol-elevated"
                 >
-                  <span class="font-display text-xl text-primary w-7 text-center shrink-0">{{ i + 1 }}</span>
+                  <span class="font-display text-xl text-primary w-6 text-center shrink-0">{{ i + 1 }}</span>
+                  <img
+                    [src]="item.imageUrl ?? placeholderFor(item.name)"
+                    class="w-11 h-11 rounded-sm object-cover shrink-0"
+                    [alt]="item.name"
+                  />
                   <div class="flex-1 min-w-0">
                     <p class="text-sm font-medium text-text-primary truncate">{{ item.name }}</p>
                     <p class="text-xs text-text-secondary truncate">{{ item.brandName }}</p>
@@ -108,6 +114,10 @@ export class RankingsPage {
   readonly items = signal<RankedFragrance[]>([]);
   readonly state = signal<LoadState>('loading');
   readonly userSkinType = signal<SkinType | null>(null);
+
+  placeholderFor(label: string): string {
+    return placeholderImageDataUri(label);
+  }
 
   constructor() {
     this.userService.getProfile().subscribe({

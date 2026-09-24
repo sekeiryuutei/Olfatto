@@ -1,5 +1,19 @@
-import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { randomUUID } from 'crypto';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/infrastructure/security/jwt-auth.guard';
 import { CurrentUser } from '@modules/auth/infrastructure/security/current-user.decorator';
 import { GetMeUseCase } from '../../application/use-cases/get-me.use-case';
@@ -10,6 +24,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { User } from '../../domain/entities/user.entity';
 import { UserProfile } from '../../domain/entities/user-profile.entity';
+
+const ALLOWED_IMAGE_TYPES = /\.(jpg|jpeg|png|webp|gif)$/i;
+const MAX_AVATAR_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 
 function toUserResponse(user: User) {
   return {
@@ -59,6 +76,42 @@ export class UsersController {
   @Patch()
   async updateMe(@CurrentUser('sub') userId: string, @Body() dto: UpdateUserDto) {
     const user = await this.updateUserUseCase.execute({ userId, ...dto });
+    return toUserResponse(user);
+  }
+
+  @Post('avatar')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/avatars',
+        filename: (_req, file, callback) => {
+          callback(null, `${randomUUID()}${extname(file.originalname)}`);
+        },
+      }),
+      limits: { fileSize: MAX_AVATAR_SIZE_BYTES },
+      fileFilter: (_req, file, callback) => {
+        if (!ALLOWED_IMAGE_TYPES.test(extname(file.originalname))) {
+          callback(new BadRequestException('Only jpg, png, webp or gif images are allowed.'), false);
+          return;
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async uploadAvatar(
+    @CurrentUser('sub') userId: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) throw new BadRequestException('No file uploaded.');
+
+    // Served statically from /uploads (see main.ts useStaticAssets). In dev
+    // this lands on the bind-mounted ./backend/uploads folder on the host;
+    // in production it needs a persistent volume (see docker-compose.yml) —
+    // a real deployment should swap this for S3/Cloudinary instead of local
+    // disk, but disk storage is a reasonable, honest choice for local/MVP use.
+    const avatarUrl = `/uploads/avatars/${file.filename}`;
+    const user = await this.updateUserUseCase.execute({ userId, avatarUrl });
     return toUserResponse(user);
   }
 

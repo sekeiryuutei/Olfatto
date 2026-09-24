@@ -1,4 +1,4 @@
-import { Component, Input, inject, signal } from '@angular/core';
+import { Component, Input, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { IonIcon } from '@ionic/angular/standalone';
@@ -8,6 +8,7 @@ import { star, heartOutline, heart } from 'ionicons/icons';
 import { FragranceSummary } from '../../../core/models/fragrance.model';
 import { ShelfService } from '../../../core/services/shelf.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { placeholderImageDataUri } from '../../utils/placeholder-image';
 
 addIcons({ star, 'heart-outline': heartOutline, heart });
 
@@ -20,12 +21,13 @@ addIcons({ star, 'heart-outline': heartOutline, heart });
       [routerLink]="['/fragrances', fragrance.id]"
       class="block rounded-card overflow-hidden ol-elevated transition-transform active:scale-[0.98]"
     >
-      <div class="relative aspect-square bg-surface flex items-center justify-center">
-        @if (fragrance.imageUrl) {
-          <img [src]="fragrance.imageUrl" [alt]="fragrance.name" class="w-full h-full object-cover" />
-        } @else {
-          <span class="font-display text-3xl text-text-muted">{{ fragrance.name[0] }}</span>
-        }
+      <div class="relative aspect-square bg-surface">
+        <img
+          [src]="imageSrc()"
+          (error)="onImageError()"
+          [alt]="fragrance.name"
+          class="w-full h-full object-cover"
+        />
         <button
           type="button"
           (click)="toggleWishlist($event)"
@@ -71,6 +73,17 @@ export class FragranceCardComponent {
 
   private readonly shelfService = inject(ShelfService);
   private readonly authService = inject(AuthService);
+
+  private readonly imageFailed = signal(false);
+  readonly imageSrc = computed(() =>
+    !this.imageFailed() && this.fragrance.imageUrl
+      ? this.fragrance.imageUrl
+      : placeholderImageDataUri(this.fragrance.name),
+  );
+
+  onImageError(): void {
+    this.imageFailed.set(true);
+  }
 
   // NOTE: reflects only what happened in THIS session — the catalog list
   // endpoint doesn't return per-user wishlist state, so a fragrance

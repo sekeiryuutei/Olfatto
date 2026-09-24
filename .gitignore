@@ -35,6 +35,10 @@ logs/
 .DS_Store
 Thumbs.db
 
+# Uploaded files (avatars, etc.) — local disk storage for MVP
+backend/uploads/*
+!backend/uploads/.gitkeep
+
 # Docker volumes data (if bind-mounted locally)
 database/pgdata/
 

@@ -54,6 +54,11 @@ export class CreateFragranceDto {
   @IsUrl()
   imageUrl?: string;
 
+  @ApiPropertyOptional({ description: 'Link de afiliado a una tienda externa (punto de monetización 2)' })
+  @IsOptional()
+  @IsUrl()
+  affiliateUrl?: string;
+
   @ApiPropertyOptional({ type: [String] })
   @IsOptional()
   @IsArray()

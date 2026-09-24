@@ -1,5 +1,3 @@
-version: "3.9"
-
 networks:
   olfatto_network:
     driver: bridge
@@ -18,7 +16,7 @@ services:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     ports:
-      - "5435:5432" # exposed only in dev, for local DB clients
+      - "5435:5432" # host 5435 (tu elección) -> contenedor 5432 (Postgres real, no cambia)
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data
     networks:
@@ -41,7 +39,7 @@ services:
       NODE_ENV: development
       DATABASE_HOST: postgres
     ports:
-      - "3100:3100"
+      - "3100:3000" # host 3100 (tu elección) -> contenedor 3000 (coincide con PORT en .env)
     volumes:
       - ./backend:/usr/src/app
       - /usr/src/app/node_modules

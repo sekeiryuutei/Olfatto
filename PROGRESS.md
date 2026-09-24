@@ -1,29 +1,44 @@
 # Estado de avance — Olfatto
 
-Última actualización: tras la primera ronda de bugs reales (registro, listado de fragancias) + reseñas con autor/útil + creación de fragancias por usuarios + avatar por URL.
+Última actualización: bugs de estante/imágenes corregidos, subida real de avatar, cambio de contraseña, campana de notificaciones (mínima), y arquitectura + código de monetización (Club/Stripe + Afiliados).
 
 ## 🐛 Bugs reales corregidos esta ronda
 
-1. **Registro fallaba ("No pudimos crear tu cuenta")**: `UserProfileOrmEntity` tenía DOS mapeos a la misma columna `user_id` — una `@Column` manual y una relación `@OneToOne` + `@JoinColumn` que nunca se seteaba. TypeORM priorizaba la relación (vacía) sobre el valor real, escribiendo NULL en una columna `UNIQUE NOT NULL` y rompiendo el INSERT. Saqué la relación de ambos lados (`User` y `UserProfile`) — en todo el código siempre trabajé con `userId` directo, nunca con el grafo de relación, así que no se perdió nada.
-2. **`GET /fragrances` 500 (`SELECT DISTINCT... ORDER BY`)**: exactamente lo que diagnosticaste — `.skip()/.take()` activa el modo de paginación "inteligente" de TypeORM (DISTINCT + subquery) cuando hay joins, y ese modo exige que el `ORDER BY` esté en el `SELECT`. Cambié a `.offset()/.limit()` (SQL crudo, sin ese envoltorio) en `postgres-fragrance.repository.ts` **y** en `postgres-review.repository.ts` (mismo bug, se iba a disparar apenas alguien ordenara reseñas por "más útil" — lo até antes de que lo reportaras).
+- **Perfil ("Todavía no tienes perfumes aquí" aunque sí había datos)**: `forkJoin` en `loadShelf()` fallaba TODO el lote si una sola fragancia del wishlist/colección daba error al buscarse (ítem borrado, id inconsistente, etc.). Ahora cada fetch tiene su propio `catchError` y se filtran los que fallan — el resto se muestra igual.
+- **Imágenes rotas mostrando texto literal (`Bleu+de+Chanel`)**: el seed anterior apuntaba a `placehold.co` (servicio externo). Si tu Docker no tiene salida a internet o el servicio está lento/caído, el navegador podía mostrar el texto de la URL en vez de la imagen. Saqué esa dependencia por completo: ahora hay un placeholder **local en SVG** (`shared/utils/placeholder-image.ts`, cero red) que se usa como imagen por defecto y como fallback automático (`(error)`) en cualquier `<img>` de la app — catálogo, detalle, ranking, avatares de reseña. Si tenés datos viejos con la URL rota, corré `update-existing-images.sql`.
 
 ## ✅ Nuevo esta ronda
 
-- **Reseñas**: autor (nombre + avatar, con fallback a inicial) vía JOIN con `users`; botón "útil" funcional con contador (marca/desmarca, estado local de sesión ya que el endpoint de listado es público y no sabe quién sos); orden por defecto ahora es "más relevantes" (más útiles primero) con límite configurable (top 10).
-- **Favoritos/Wishlist/Colección**: ya estaban conectados desde la entrega anterior — lo que agregué es feedback visible cuando falla algo (antes revertía en silencio, por eso probablemente parecía que "no hacía nada" mientras el backend estaba roto por los bugs de arriba).
-- **Crear fragancias**: cualquier usuario autenticado puede publicar una fragancia nueva (antes era solo ADMIN). Pantalla completa en `/fragrances/create` (el botón `+` del nav ahora lleva ahí): nombre, marca (elegís una existente o creás una nueva al vuelo), concentración, género, año, imagen por URL, descripción, familias y notas. Nuevos endpoints `GET/POST /brands`, `GET /families`, `GET /notes`.
-- **Avatar**: `PATCH /users/me` ya soportaba `avatarUrl` desde el principio — lo que faltaba era la UI. Ahora en Perfil podés tocar tu avatar y pegar una URL de imagen.
-- **Imágenes de fragancias**: el seed nunca las cargaba — ahora sí (placeholders genéricos con el nombre de cada perfume, no fotos reales de producto). Si ya tenés datos cargados, corré `update-existing-images.sql` (adjunto) para no perder tus reseñas re-seedeando.
+**Perfil:**
+- Subida real de foto de perfil (archivo, no URL) — `POST /users/me/avatar` con Multer, servido desde `/uploads/avatars`. Local disk para MVP; ver nota de S3 en el propio endpoint para producción real.
+- Cambio de contraseña (actual + nueva) — `POST /auth/change-password`, distinto del flujo de "olvidé mi contraseña".
+- Botón de cerrar sesión (ya existía, ahora más visible).
 
-## ⚠️ Pendiente de lo que pediste
+**Reseñas:** (repaso — esto ya estaba de la ronda anterior, por si no llegó a aplicarse) autor con nombre+avatar, botón "útil" con contador, orden por relevancia con top 10.
 
-- **Subir foto de perfil como archivo real**: lo que hay hoy es pegar una URL. Subida real (`<input type="file">` → backend con Multer → almacenamiento) es más trabajo de infraestructura (storage, servir estático) que no llegué a hacer esta ronda.
-- **Fotos reales de las lociones**: la plomería ya funciona (mostrás lo que sea que esté en `imageUrl`), pero las URLs son placeholders — necesitás fotos con licencia real para producción.
+**Home:** campana de notificaciones ahora abre un popover — todavía sin generación real de eventos en el backend (ver pendientes).
 
-## Checklist del punto 88 — sigue completo, con lo de arriba ahora más sólido
+**Rankings:** cada fila ahora tiene miniatura de imagen.
 
-Nada del checklist en sí cambió de estado (ya estaba todo implementado), pero **Reviews**, **Wishlist/Colección** y **Recomendaciones** pasaron de "conectado pero posiblemente roto en silencio" a "con manejo de errores visible y bugs de fondo corregidos". Sigue pendiente lo mismo que ya estaba documentado: breakpoints responsive de tablet/desktop, más tests, subida real de archivos, Admin (fuera de MVP por diseño).
+**Monetización — ver `docs/MONETIZATION.md` para la arquitectura completa:**
+- **Afiliados**: campo `affiliateUrl` en Fragrance, botón "Comprar al mejor precio" en el detalle (con disclosure de afiliado). Vos cargás las URLs (es una decisión de negocio/manual, no técnica).
+- **Olfatto Club (Stripe)**: módulo `billing` completo — Customer + Checkout Session + Billing Portal + webhook con verificación de firma, entidad `Subscription`, `ClubGuard` para gatear funciones exclusivas. Ya gateado: `GET /recommendations/advanced` (20 resultados + razones del match, en vez de 10 sin razones). Frontend: sección "Olfatto Club" en Perfil con botón de unirse/gestionar.
+  - **Para que funcione de verdad necesitás vos**: cuenta de Stripe (modo test alcanza), crear un Product+Price recurrente, completar `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET`/`STRIPE_CLUB_PRICE_ID` en `.env`. Sin eso, el botón "Unirme" va a fallar con un error de Stripe — es esperable, no es un bug.
+
+## ⚠️ Pendiente
+
+- **Marketplace de decants**: diseñado a fondo en `docs/MONETIZATION.md`, sin implementar — depende de 4 decisiones de negocio tuyas (quién vende, quién retiene el dinero, decants vs. perfumes completos, envío físico). Te las dejé explícitas ahí.
+- **Informe de durabilidad en piel (Club)**: el endpoint `/recommendations/advanced` ya está, pero el "informe de durabilidad" específico (percentil vs. el catálogo) todavía no — es la siguiente pieza lógica de Club.
+- **Notificaciones reales**: el ícono ya abre un popover, pero no hay generación de eventos (alguien marcó tu reseña útil, etc.) — necesita un mini sistema de eventos en el backend.
+- Lo que ya estaba documentado antes sigue igual: breakpoints responsive de escritorio, más tests, Admin fuera de MVP por diseño.
+
+## Cómo probar Stripe en local (opcional, solo si ya tenés cuenta)
+
+```bash
+stripe listen --forward-to localhost:3100/api/v1/billing/webhook
+```
+Te da un `whsec_...` para `STRIPE_WEBHOOK_SECRET`. Sin esto, el checkout igual funciona (redirige a Stripe y vuelve), pero el estado de la suscripción no se actualiza solo hasta que el webhook llegue.
 
 ## Cómo seguir
 
-Decime qué probaste y qué encontraste — con el registro y el listado de fragancias arreglados, deberías poder recorrer el flujo completo (registro → catálogo → detalle → reseña → útil → favoritos/wishlist → crear fragancia → perfil) sin choques. Si algo sigue fallando, pegame el log del backend tal como la vez pasada — ahí está la respuesta siempre.
+Decime qué opción elegís para cada una de las 4 decisiones del marketplace de decants (`docs/MONETIZATION.md`, sección 3) y lo construyo con el mismo nivel de profundidad que el resto. Mientras tanto, probá lo de arriba y contame qué encontrás.

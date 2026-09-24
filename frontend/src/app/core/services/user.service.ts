@@ -18,6 +18,14 @@ export class UserService {
     return this.http.patch<ApiEnvelope<User>>(this.baseUrl, payload).pipe(map((res) => res.data));
   }
 
+  uploadAvatar(file: File): Observable<User> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http
+      .post<ApiEnvelope<User>>(`${this.baseUrl}/avatar`, formData)
+      .pipe(map((res) => res.data));
+  }
+
   getProfile(): Observable<UserProfile> {
     return this.http
       .get<ApiEnvelope<UserProfile>>(`${this.baseUrl}/profile`)

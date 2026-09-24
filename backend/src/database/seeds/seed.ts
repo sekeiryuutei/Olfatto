@@ -78,11 +78,10 @@ async function run(): Promise<void> {
   // Sauvage EDP is the fragrance used in every mockup throughout the spec
   // (points 8, 14-20) — seeded with real reviews below so the detail page
   // shows actual duration/skin-performance data on first run.
-  // imageUrl uses a generic placeholder service (not real product photos —
-  // those need actual licensed assets) just so the image-rendering path
-  // has something real to display end-to-end (point 4).
-  const placeholderImage = (label: string) =>
-    `https://placehold.co/600x600/1B1B1F/D4AF37?text=${encodeURIComponent(label)}`;
+  // No imageUrl seeded here on purpose: the frontend renders a proper
+  // local SVG placeholder (see shared/utils/placeholder-image.ts) whenever
+  // imageUrl is missing, so nothing needs faking here — set a real URL
+  // once you have licensed product photography.
 
   const fragrancesData = [
     {
@@ -92,7 +91,6 @@ async function run(): Promise<void> {
       gender: 'MASCULINE',
       releaseYear: 2018,
       description: 'Fresco, especiado y adictivo — la referencia moderna del amaderado especiado.',
-      imageUrl: placeholderImage('Sauvage'),
       families: [family('Amaderado'), family('Especiado'), family('Ámbar'), family('Cítrico')],
       notes: [note('Bergamota'), note('Pimienta'), note('Ámbar'), note('Maderas'), note('Elemí')],
     },
@@ -103,7 +101,6 @@ async function run(): Promise<void> {
       gender: 'MASCULINE',
       releaseYear: 2014,
       description: 'Amaderado aromático, versátil, con un fondo cálido y elegante.',
-      imageUrl: placeholderImage('Bleu+de+Chanel'),
       families: [family('Amaderado'), family('Cítrico')],
       notes: [note('Bergamota'), note('Cedro'), note('Incienso')],
     },
@@ -114,7 +111,6 @@ async function run(): Promise<void> {
       gender: 'MASCULINE',
       releaseYear: 2018,
       description: 'Aromático fougère con salida cítrica y fondo amaderado.',
-      imageUrl: placeholderImage('YSL+Y'),
       families: [family('Fougère'), family('Amaderado')],
       notes: [note('Bergamota'), note('Geranio'), note('Cedro')],
     },
@@ -125,7 +121,6 @@ async function run(): Promise<void> {
       gender: 'MASCULINE',
       releaseYear: 2010,
       description: 'Afrutado y amaderado, icónico por su salida a piña y fondo a musgo de roble.',
-      imageUrl: placeholderImage('Aventus'),
       families: [family('Amaderado'), family('Cítrico')],
       notes: [note('Bergamota'), note('Almizcle'), note('Cedro')],
     },
@@ -136,7 +131,6 @@ async function run(): Promise<void> {
       gender: 'UNISEX',
       releaseYear: 2016,
       description: 'Oriental especiado con vainilla y almendra amarga sobre fondo amaderado.',
-      imageUrl: placeholderImage('Layton'),
       families: [family('Oriental'), family('Especiado')],
       notes: [note('Vainilla'), note('Cardamomo'), note('Maderas')],
     },
@@ -147,7 +141,6 @@ async function run(): Promise<void> {
       gender: 'MASCULINE',
       releaseYear: 2004,
       description: 'Oriental amaderado con salida cítrica y corazón de tabaco.',
-      imageUrl: placeholderImage('Armani+Code'),
       families: [family('Oriental'), family('Amaderado')],
       notes: [note('Bergamota'), note('Cuero'), note('Cardamomo')],
     },
@@ -158,7 +151,6 @@ async function run(): Promise<void> {
       gender: 'UNISEX',
       releaseYear: 2007,
       description: 'Amaderado oriental exótico, cálido y envolvente.',
-      imageUrl: placeholderImage('Oud+Wood'),
       families: [family('Amaderado'), family('Oriental')],
       notes: [note('Maderas'), note('Cardamomo'), note('Ámbar')],
     },
@@ -173,7 +165,6 @@ async function run(): Promise<void> {
         gender: data.gender,
         releaseYear: data.releaseYear,
         description: data.description,
-        imageUrl: data.imageUrl,
         families: data.families,
         notes: data.notes,
       }),

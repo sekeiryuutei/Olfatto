@@ -51,6 +51,7 @@ function toFragranceDetail(details: FragranceDetails) {
     releaseYear: f.releaseYear,
     description: f.description,
     imageUrl: f.imageUrl,
+    affiliateUrl: f.affiliateUrl,
     brand: details.brand ? { id: details.brand.id, name: details.brand.name } : null,
     notes: details.notes.map((n) => ({ id: n.id, name: n.name })),
     families: details.families.map((fam) => ({ id: fam.id, name: fam.name })),

@@ -21,6 +21,7 @@ import { RefreshTokenUseCase } from './application/use-cases/refresh-token.use-c
 import { LogoutUserUseCase } from './application/use-cases/logout-user.use-case';
 import { ForgotPasswordUseCase } from './application/use-cases/forgot-password.use-case';
 import { ResetPasswordUseCase } from './application/use-cases/reset-password.use-case';
+import { ChangePasswordUseCase } from './application/use-cases/change-password.use-case';
 import { GoogleLoginUseCase } from './application/use-cases/google-login.use-case';
 
 @Module({
@@ -44,6 +45,7 @@ import { GoogleLoginUseCase } from './application/use-cases/google-login.use-cas
     LogoutUserUseCase,
     ForgotPasswordUseCase,
     ResetPasswordUseCase,
+    ChangePasswordUseCase,
     GoogleLoginUseCase,
   ],
 })

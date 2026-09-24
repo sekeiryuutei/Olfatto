@@ -34,9 +34,18 @@ type LoadState = 'loading' | 'success' | 'error';
     <ion-content [fullscreen]="true">
       <div class="px-4 pt-4 pb-24 max-w-3xl mx-auto">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center justify-between mb-4 relative">
           <span class="font-display text-xl text-primary">OLFATTO</span>
-          <ion-icon name="notifications-outline" class="text-xl text-text-secondary"></ion-icon>
+          <button type="button" (click)="showNotifications.set(!showNotifications())" class="relative">
+            <ion-icon name="notifications-outline" class="text-xl text-text-secondary"></ion-icon>
+          </button>
+
+          @if (showNotifications()) {
+            <div class="absolute top-8 right-0 w-64 ol-elevated rounded-card p-3 z-50 shadow-lg">
+              <p class="text-xs font-medium text-text-primary mb-2">{{ 'NOTIFICATIONS.TITLE' | translate }}</p>
+              <p class="text-text-muted text-xs">{{ 'NOTIFICATIONS.EMPTY' | translate }}</p>
+            </div>
+          }
         </div>
 
         <h1 class="text-xl font-medium text-text-primary">
@@ -118,6 +127,7 @@ export class HomePage {
   private readonly shelfService = inject(ShelfService);
 
   readonly userName = computed(() => this.authService.currentUser()?.name.split(' ')[0] ?? '');
+  readonly showNotifications = signal(false);
 
   readonly forYou = signal<RecommendedFragrance[]>([]);
   readonly forYouState = signal<LoadState>('loading');

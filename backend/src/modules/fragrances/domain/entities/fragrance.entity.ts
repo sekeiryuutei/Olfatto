@@ -10,6 +10,7 @@ export interface FragranceProps {
   releaseYear: number | null;
   description: string | null;
   imageUrl: string | null;
+  affiliateUrl: string | null;
   noteIds: string[];
   familyIds: string[];
   createdAt: Date;
@@ -32,6 +33,7 @@ export class Fragrance extends BaseEntity<FragranceProps> {
     releaseYear?: number | null;
     description?: string | null;
     imageUrl?: string | null;
+    affiliateUrl?: string | null;
     noteIds?: string[];
     familyIds?: string[];
   }): Fragrance {
@@ -54,6 +56,7 @@ export class Fragrance extends BaseEntity<FragranceProps> {
       releaseYear: params.releaseYear ?? null,
       description: params.description ?? null,
       imageUrl: params.imageUrl ?? null,
+      affiliateUrl: params.affiliateUrl ?? null,
       noteIds: params.noteIds ?? [],
       familyIds: params.familyIds ?? [],
       createdAt: now,
@@ -86,6 +89,9 @@ export class Fragrance extends BaseEntity<FragranceProps> {
   get imageUrl(): string | null {
     return this.props.imageUrl;
   }
+  get affiliateUrl(): string | null {
+    return this.props.affiliateUrl;
+  }
   get noteIds(): string[] {
     return [...this.props.noteIds];
   }
@@ -106,6 +112,7 @@ export class Fragrance extends BaseEntity<FragranceProps> {
     releaseYear: number | null;
     description: string | null;
     imageUrl: string | null;
+    affiliateUrl: string | null;
     noteIds: string[];
     familyIds: string[];
   }>): void {

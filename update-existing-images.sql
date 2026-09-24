@@ -1,6 +1,6 @@
--- Corre esto una sola vez sobre tu DB actual para que las 7 fragancias del
--- seed tengan imagen sin necesidad de re-sedear (evita duplicar/romper las
--- reviews que ya cargaste). Son placeholders genéricos, no fotos reales de
--- producto -- reemplazalas por fotos con licencia antes de cualquier launch real.
-UPDATE fragrances SET image_url = 'https://placehold.co/600x600/1B1B1F/D4AF37?text=' || REPLACE(name, ' ', '+')
-WHERE image_url IS NULL;
+-- Corré esto una sola vez sobre tu DB actual si tus fragancias quedaron con
+-- una URL de placehold.co (la que mostraba texto roto tipo "Bleu+de+Chanel").
+-- Las vuelve a NULL -- el frontend ya genera su propio placeholder local
+-- (SVG, sin red) automáticamente cuando no hay imageUrl, así que no hace
+-- falta apuntar a ningún servicio externo.
+UPDATE fragrances SET image_url = NULL WHERE image_url LIKE '%placehold.co%';

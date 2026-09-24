@@ -33,7 +33,9 @@
     "SKIN_PERFORMANCE": "¿Cómo funciona en diferentes pieles?",
     "NO_REVIEWS_YET": "Todavía no hay reseñas para este perfume.",
     "TOP_REVIEWS": "Reseñas más relevantes",
-    "TOP_REVIEWS_HINT": "Ordenadas por cuántas personas las marcaron como útiles"
+    "TOP_REVIEWS_HINT": "Ordenadas por cuántas personas las marcaron como útiles",
+    "BUY_BEST_PRICE": "Comprar al mejor precio",
+    "AFFILIATE_DISCLOSURE": "Enlace de afiliado — Olfatto puede recibir una comisión sin costo extra para vos."
   },
   "CATALOG": {
     "SORT": {
@@ -45,7 +47,7 @@
     },
     "EMPTY": "No encontramos perfumes con esos filtros."
   },
-  "COMMON": { "RETRY": "Intentar nuevamente", "LOAD_ERROR": "No pudimos cargar esta información." },
+  "COMMON": { "RETRY": "Intentar nuevamente", "LOAD_ERROR": "No pudimos cargar esta información.", "LOADING": "Cargando..." },
   "RANKINGS": {
     "TITLE": "Ranking",
     "GLOBAL": "Global",
@@ -64,6 +66,12 @@
     "CLIMATE": "Clima habitual",
     "SAVE": "Guardar cambios",
     "SAVED": "✓ Guardado",
+    "CHANGE_PASSWORD": "Cambiar contraseña",
+    "CURRENT_PASSWORD": "Contraseña actual",
+    "NEW_PASSWORD": "Contraseña nueva",
+    "UPDATE_PASSWORD_CTA": "Actualizar contraseña",
+    "PASSWORD_CHANGED": "✓ Contraseña actualizada.",
+    "AVATAR_ERROR": "No pudimos subir la imagen. Probá con otra (máx. 5MB).",
     "COLLECTION": "Colección",
     "WISHLIST": "Wishlist",
     "FAVORITES": "Favoritos",
@@ -96,6 +104,19 @@
     "ERROR": "No pudimos guardar el cambio. Revisá tu conexión e intentá de nuevo."
   },
   "GENDER": { "MASCULINE": "Masculino", "FEMININE": "Femenino", "UNISEX": "Unisex" },
+  "NOTIFICATIONS": {
+    "TITLE": "Notificaciones",
+    "EMPTY": "Todavía no tenés notificaciones. Pronto vas a ver acá cuando alguien marque tu reseña como útil o comente."
+  },
+  "CLUB": {
+    "ACTIVE_BADGE": "Activo",
+    "ACTIVE_HINT": "Tenés acceso a recomendaciones avanzadas e informes de durabilidad.",
+    "MANAGE_CTA": "Gestionar suscripción",
+    "PITCH": "Recomendaciones avanzadas, informes de durabilidad por tipo de piel y más.",
+    "JOIN_CTA": "Unirme a Olfatto Club",
+    "CHECKOUT_ERROR": "No pudimos iniciar el pago. Intentá de nuevo.",
+    "PORTAL_ERROR": "No pudimos abrir la gestión de suscripción."
+  },
   "CREATE_FRAGRANCE": {
     "TITLE": "Nueva fragancia",
     "SUBTITLE": "Agregá un perfume que no esté en el catálogo.",

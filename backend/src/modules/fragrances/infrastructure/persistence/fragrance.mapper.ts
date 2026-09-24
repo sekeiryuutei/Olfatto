@@ -15,6 +15,7 @@ export class FragranceMapper {
       releaseYear: orm.releaseYear,
       description: orm.description,
       imageUrl: orm.imageUrl,
+      affiliateUrl: orm.affiliateUrl,
       noteIds: (orm.notes ?? []).map((n) => n.id),
       familyIds: (orm.families ?? []).map((f) => f.id),
       createdAt: orm.createdAt,
@@ -38,6 +39,7 @@ export class FragranceMapper {
     orm.releaseYear = snapshot.releaseYear;
     orm.description = snapshot.description;
     orm.imageUrl = snapshot.imageUrl;
+    orm.affiliateUrl = snapshot.affiliateUrl;
     orm.notes = snapshot.noteIds.map((id) => ({ id }) as NoteOrmEntity);
     orm.families = snapshot.familyIds.map((id) => ({ id }) as FamilyOrmEntity);
     orm.createdAt = snapshot.createdAt;

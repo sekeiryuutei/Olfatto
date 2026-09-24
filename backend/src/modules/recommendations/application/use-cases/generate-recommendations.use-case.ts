@@ -16,8 +16,16 @@ import {
 
 const DEFAULT_RESULT_COUNT = 10;
 
+export interface GenerateRecommendationsInput {
+  userId: string;
+  /** Club's "advanced recommendations" (point: monetización 1) requests more results via the same algorithm. */
+  resultCount?: number;
+}
+
 @Injectable()
-export class GenerateRecommendationsUseCase implements UseCase<string, RecommendedFragrance[]> {
+export class GenerateRecommendationsUseCase
+  implements UseCase<GenerateRecommendationsInput, RecommendedFragrance[]>
+{
   constructor(
     @Inject(USER_PROFILE_REPOSITORY)
     private readonly userProfileRepository: UserProfileRepository,
@@ -26,9 +34,9 @@ export class GenerateRecommendationsUseCase implements UseCase<string, Recommend
     private readonly compatibilityCalculator: CompatibilityScoreCalculatorService,
   ) {}
 
-  async execute(userId: string): Promise<RecommendedFragrance[]> {
-    const profile = await this.userProfileRepository.findByUserId(userId);
-    if (!profile) throw new UserNotFoundException(userId);
+  async execute(input: GenerateRecommendationsInput): Promise<RecommendedFragrance[]> {
+    const profile = await this.userProfileRepository.findByUserId(input.userId);
+    if (!profile) throw new UserNotFoundException(input.userId);
 
     const candidates = await this.recommendationDataRepository.getCandidates(profile.skinType);
 
@@ -38,6 +46,6 @@ export class GenerateRecommendationsUseCase implements UseCase<string, Recommend
       preferredProjection: profile.preferredProjection,
     });
 
-    return ranked.slice(0, DEFAULT_RESULT_COUNT);
+    return ranked.slice(0, input.resultCount ?? DEFAULT_RESULT_COUNT);
   }
 }

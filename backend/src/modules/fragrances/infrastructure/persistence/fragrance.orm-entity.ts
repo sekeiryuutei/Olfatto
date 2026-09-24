@@ -43,6 +43,9 @@ export class FragranceOrmEntity {
   @Column({ name: 'image_url', type: 'varchar', nullable: true })
   imageUrl: string | null;
 
+  @Column({ name: 'affiliate_url', type: 'varchar', nullable: true })
+  affiliateUrl: string | null;
+
   @ManyToMany(() => NoteOrmEntity)
   @JoinTable({
     name: 'fragrance_notes',

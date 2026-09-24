@@ -58,6 +58,7 @@ export interface FragranceDetail {
   releaseYear: number | null;
   description: string | null;
   imageUrl: string | null;
+  affiliateUrl: string | null;
   brand: { id: string; name: string } | null;
   notes: { id: string; name: string }[];
   families: { id: string; name: string }[];

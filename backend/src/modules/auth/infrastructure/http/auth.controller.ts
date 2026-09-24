@@ -11,6 +11,7 @@ import { RefreshTokenUseCase } from '../../application/use-cases/refresh-token.u
 import { LogoutUserUseCase } from '../../application/use-cases/logout-user.use-case';
 import { ForgotPasswordUseCase } from '../../application/use-cases/forgot-password.use-case';
 import { ResetPasswordUseCase } from '../../application/use-cases/reset-password.use-case';
+import { ChangePasswordUseCase } from '../../application/use-cases/change-password.use-case';
 import { GoogleLoginUseCase } from '../../application/use-cases/google-login.use-case';
 import { AuthResult } from '../../application/use-cases/register-user.use-case';
 import { RegisterDto } from './dto/register.dto';
@@ -18,6 +19,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { JwtAuthGuard } from '../security/jwt-auth.guard';
 import { CurrentUser } from '../security/current-user.decorator';
 import { GoogleProfile } from '../security/google.strategy';
@@ -56,6 +58,7 @@ export class AuthController {
     private readonly logoutUserUseCase: LogoutUserUseCase,
     private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
     private readonly resetPasswordUseCase: ResetPasswordUseCase,
+    private readonly changePasswordUseCase: ChangePasswordUseCase,
     private readonly googleLoginUseCase: GoogleLoginUseCase,
     private readonly getMeUseCase: GetMeUseCase,
   ) {}
@@ -101,6 +104,17 @@ export class AuthController {
       resetToken: dto.resetToken,
       newPassword: dto.newPassword,
     });
+  }
+
+  @Post('change-password')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async changePassword(
+    @CurrentUser('sub') userId: string,
+    @Body() dto: ChangePasswordDto,
+  ): Promise<void> {
+    await this.changePasswordUseCase.execute({ userId, ...dto });
   }
 
   @Get('me')

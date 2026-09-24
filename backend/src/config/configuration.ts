@@ -21,6 +21,14 @@ export interface AppConfig {
     clientSecret: string;
     callbackUrl: string;
   };
+  stripe: {
+    secretKey: string;
+    webhookSecret: string;
+    clubPriceId: string;
+    successUrl: string;
+    cancelUrl: string;
+    portalReturnUrl: string;
+  };
 }
 
 export default (): AppConfig => ({
@@ -45,5 +53,13 @@ export default (): AppConfig => ({
     clientId: process.env.GOOGLE_CLIENT_ID ?? '',
     clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
     callbackUrl: process.env.GOOGLE_CALLBACK_URL ?? '',
+  },
+  stripe: {
+    secretKey: process.env.STRIPE_SECRET_KEY ?? '',
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? '',
+    clubPriceId: process.env.STRIPE_CLUB_PRICE_ID ?? '',
+    successUrl: process.env.STRIPE_SUCCESS_URL ?? 'http://localhost:8100/profile?club=success',
+    cancelUrl: process.env.STRIPE_CANCEL_URL ?? 'http://localhost:8100/profile?club=canceled',
+    portalReturnUrl: process.env.STRIPE_PORTAL_RETURN_URL ?? 'http://localhost:8100/profile',
   },
 });

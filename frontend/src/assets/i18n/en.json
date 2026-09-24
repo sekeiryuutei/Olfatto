@@ -33,7 +33,9 @@
     "SKIN_PERFORMANCE": "How does it perform on different skin types?",
     "NO_REVIEWS_YET": "No reviews for this fragrance yet.",
     "TOP_REVIEWS": "Most relevant reviews",
-    "TOP_REVIEWS_HINT": "Sorted by how many people found them helpful"
+    "TOP_REVIEWS_HINT": "Sorted by how many people found them helpful",
+    "BUY_BEST_PRICE": "Buy at the best price",
+    "AFFILIATE_DISCLOSURE": "Affiliate link — Olfatto may earn a commission at no extra cost to you."
   },
   "CATALOG": {
     "SORT": {
@@ -45,7 +47,7 @@
     },
     "EMPTY": "No fragrances match those filters."
   },
-  "COMMON": { "RETRY": "Try again", "LOAD_ERROR": "We couldn't load this." },
+  "COMMON": { "RETRY": "Try again", "LOAD_ERROR": "We couldn't load this.", "LOADING": "Loading..." },
   "RANKINGS": {
     "TITLE": "Rankings",
     "GLOBAL": "Global",
@@ -64,6 +66,12 @@
     "CLIMATE": "Usual climate",
     "SAVE": "Save changes",
     "SAVED": "✓ Saved",
+    "CHANGE_PASSWORD": "Change password",
+    "CURRENT_PASSWORD": "Current password",
+    "NEW_PASSWORD": "New password",
+    "UPDATE_PASSWORD_CTA": "Update password",
+    "PASSWORD_CHANGED": "✓ Password updated.",
+    "AVATAR_ERROR": "We couldn't upload that image. Try another one (max 5MB).",
     "COLLECTION": "Collection",
     "WISHLIST": "Wishlist",
     "FAVORITES": "Favorites",
@@ -96,6 +104,19 @@
     "ERROR": "We couldn't save that. Check your connection and try again."
   },
   "GENDER": { "MASCULINE": "Masculine", "FEMININE": "Feminine", "UNISEX": "Unisex" },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifications",
+    "EMPTY": "No notifications yet. Soon you'll see when someone finds your review helpful or comments."
+  },
+  "CLUB": {
+    "ACTIVE_BADGE": "Active",
+    "ACTIVE_HINT": "You have access to advanced recommendations and durability reports.",
+    "MANAGE_CTA": "Manage subscription",
+    "PITCH": "Advanced recommendations, skin-specific durability reports and more.",
+    "JOIN_CTA": "Join Olfatto Club",
+    "CHECKOUT_ERROR": "We couldn't start checkout. Try again.",
+    "PORTAL_ERROR": "We couldn't open subscription management."
+  },
   "CREATE_FRAGRANCE": {
     "TITLE": "New fragrance",
     "SUBTITLE": "Add a perfume that isn't in the catalog yet.",
